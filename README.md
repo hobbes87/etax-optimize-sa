@@ -1,13 +1,13 @@
-# eTaxOptimize SA — Complete Local-Ready Repository
+# eTaxOptimize SA
 
-## Quick Start (Zero External Database Setup Required)
+## Quick Start
 
-1. Extract this ZIP archive into `C:\Users\Ryant\etaxoptimize-sa` (overwrite existing files if prompted).
-2. Open PowerShell inside `C:\Users\Ryant\etaxoptimize-sa` and run:
+1. Create a PostgreSQL database and set its connection URL as `DATABASE_URL` in `.env`. Keep credentials private.
+2. Install dependencies, generate Prisma Client, and apply the checked-in migrations:
    ```powershell
    npm install
    npx prisma generate
-   npx prisma db push
+   npx prisma migrate deploy
    npm run dev
    ```
 3. Open `http://localhost:3000` in Chrome:
