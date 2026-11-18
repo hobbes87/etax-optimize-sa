@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String      @id @default(cuid())
+  fullName            String
+  email               String      @unique
+  phone               String      @unique
+  passwordHash        String
+  isVerified          Boolean     @default(false)
+  popiaConsentAt      DateTime
+  specialDataConsent  Boolean     @default(false)
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  taxYears            TaxYear[]
+  otpCodes            OtpToken[]
+  auditLogs           AuditLog[]
+}
+
+model OtpToken {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codeHash    String
+  purpose     String
+  attempts    Int      @default(0)
+  expiresAt   DateTime
+  consumed    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model TaxYear {
+  id                  String          @id @default(cuid())
+  userId              String
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assessmentYear      Int
+  status              String          @default("DRAFT")
+  classification      String          @default("SALARIED_EMPLOYEE")
+  age                 Int             @default(35)
+  isSaResident        Boolean         @default(true)
+  maritalRegime       String          @default("OUT_OF_COMMUNITY")
+  scopeFlags          String          @default("{}")
+  coveredMonths       String          @default("[]")
+  calculationSnapshot String?
+  paymentRef          String?         @unique
+  amendmentCount      Int             @default(0)
+  lockedAt            DateTime?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  documents           DocumentVault[]
+  transactions        Transaction[]
+
+  @@unique([userId, assessmentYear])
+}
+
+model DocumentVault {
+  id            String   @id @default(cuid())
+  taxYearId     String
+  taxYear       TaxYear  @relation(fields: [taxYearId], references: [id], onDelete: Cascade)
+  fileName      String
+  docCategory   String
+  sha256Hash    String
+  extractedMeta String?
+  uploadedAt    DateTime @default(now())
+}
+
+model Transaction {
+  id              String   @id @default(cuid())
+  taxYearId       String
+  taxYear         TaxYear  @relation(fields: [taxYearId], references: [id], onDelete: Cascade)
+  txFingerprint   String
+  txDate          String
+  description     String
+  amount          Float
+  txType          String
+  sarsCode        String
+  confidence      Int
+  clarifiedByUser Boolean  @default(false)
+  linkedDocHash   String?
+
+  @@unique([taxYearId, txFingerprint])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String
+  metaHash  String
+  createdAt DateTime @default(now())
+}
