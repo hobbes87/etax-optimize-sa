@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+.streamlit/vault.key
+*.db
+*.sqlite3
+etax_vault.db*
+__pycache__/
+venv/
+.pytest_cache/
+.venv/
+node_modules
+.next/
+*.tsbuildinfo

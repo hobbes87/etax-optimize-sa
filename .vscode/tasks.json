@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Next.js dev server",
+			"type": "shell",
+			"command": "C:\\Users\\Ryant\\.copilot\\session-state\\2a2c4d0d-a10d-4f96-8083-98cf47c081de\\files\\node-portable\\node-v20.19.5-win-x64\\npm.cmd",
+			"args": [
+				"run",
+				"dev"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

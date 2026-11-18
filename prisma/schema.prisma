@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model UserAccount {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  phone        String    @unique
+  passwordHash String
+  otpVerified  Boolean   @default(false)
+  consentAt    DateTime?
+  createdAt    DateTime  @default(now())
+  taxYears     TaxYear[]
+}
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  phone     String
+  codeHash  String
+  expiresAt DateTime
+  consumed  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+}
+
+model TaxYear {
+  id                String        @id @default(cuid())
+  userId            String
+  user              UserAccount   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label             String
+  periodStart       DateTime
+  periodEnd         DateTime
+  state             String        @default("DRAFT")
+  taxpayerType      String?
+  residency         String?
+  grossIncome       Decimal       @default(0)
+  deductions        Decimal       @default(0)
+  estimatedTax      Decimal       @default(0)
+  estimatedRefund   Decimal       @default(0)
+  consentFinancial  Boolean       @default(false)
+  consentSpecialPi  Boolean       @default(false)
+  consentAiTraining Boolean       @default(false)
+  consentAt         DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  documents         Document[]
+  payments          Payment[]
+  auditEvents       AuditEvent[]
+
+  @@unique([userId, label])
+  @@index([userId, state])
+}
+
+model Document {
+  id            String   @id @default(cuid())
+  taxYearId     String
+  taxYear       TaxYear  @relation(fields: [taxYearId], references: [id], onDelete: Cascade)
+  category      String
+  fileName      String
+  mimeType      String
+  sha256        String
+  extractedText String
+  scrubbedText  String
+  createdAt     DateTime @default(now())
+
+  @@unique([taxYearId, sha256])
+  @@index([taxYearId, category])
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  taxYearId   String
+  taxYear     TaxYear  @relation(fields: [taxYearId], references: [id], onDelete: Cascade)
+  reference   String   @unique
+  amountCents Int
+  currency    String   @default("ZAR")
+  status      String   @default("PENDING")
+  payRequestId String? @unique
+  transactionId String? @unique
+  resultCode  String?
+  resultDesc  String?
+  paidAt      DateTime?
+  createdAt   DateTime @default(now())
+}
+
+model AuditEvent {
+  id        String   @id @default(cuid())
+  taxYearId String
+  taxYear   TaxYear  @relation(fields: [taxYearId], references: [id], onDelete: Cascade)
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+
+  @@index([taxYearId, createdAt])
+}

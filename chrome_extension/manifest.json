@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "eTaxOptimize SA eFiling Companion",
+  "version": "1.0.0",
+  "description": "User-triggered, checksum-verified field assistance for SARS eFiling.",
+  "permissions": ["activeTab", "storage"],
+  "host_permissions": [
+    "https://*.sarsefiling.co.za/*",
+    "https://*.sars.gov.za/*",
+    "http://localhost:8501/*"
+  ],
+  "action": {
+    "default_title": "eTaxOptimize SA Companion",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.sarsefiling.co.za/*",
+        "https://*.sars.gov.za/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

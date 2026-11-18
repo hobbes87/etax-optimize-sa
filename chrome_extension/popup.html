@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>eTaxOptimize Companion</title>
+    <style>
+      body { background:#0e1117; color:#fff; font:14px system-ui,sans-serif; margin:0; padding:16px; width:320px }
+      h1 { color:#00a86b; font-size:17px; margin:0 0 8px }
+      p { color:#c8cbd0; line-height:1.45 }
+      textarea { box-sizing:border-box; height:150px; width:100%; background:#1e232a; border:1px solid #505760; border-radius:6px; color:#fff; padding:8px; resize:vertical }
+      button { background:#00a86b; border:0; border-radius:6px; color:#06130d; cursor:pointer; font-weight:700; margin-top:10px; padding:10px; width:100% }
+      #status { min-height:20px }
+    </style>
+  </head>
+  <body>
+    <h1>eTaxOptimize SA</h1>
+    <p>Paste a signed JSON payload from Stage 5. Review the tax year and open SARS eFiling before applying.</p>
+    <textarea id="payload" spellcheck="false" aria-label="Signed eFiling payload" placeholder='{"payload":{...},"sha256":"..."}'></textarea>
+    <button id="apply" type="button">Verify and fill visible fields</button>
+    <p id="status" role="status"></p>
+    <script src="popup.js"></script>
+  </body>
+</html>
