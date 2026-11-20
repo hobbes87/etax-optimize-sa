@@ -11,3 +11,30 @@ services:
         sync: false
       - key: PAYGATE_HMAC_SECRET
         generateValue: true
+
+  - type: web
+    name: etaxoptimize-nextjs
+    runtime: node
+    plan: 0.5c-512mb
+    rootDir: ./etaxoptimize-sa
+    buildCommand: npm ci && npm run build
+    preDeployCommand: npx prisma db push
+    startCommand: npm start
+    healthCheckPath: /
+    disk:
+      name: etaxoptimize-nextjs-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: DATABASE_URL
+        value: file:/var/data/etax.db
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: OTP_PEPPER
+        generateValue: true
+      - key: PAYGATE_ID
+        sync: false
+      - key: PAYGATE_SECRET
+        sync: false
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false

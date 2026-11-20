@@ -17,3 +17,13 @@
    - **Stage 3:** Confirm ambiguous items and verify your IRP5 figures.
    - **Stage 4:** Run the deterministic South African Income Tax calculation and unlock Stage 5.
    - **Stage 5 & 6:** Step through the guided SARS eFiling instructions or use the `extension/` folder in Chrome (`chrome://extensions` -> Load unpacked).
+
+## Deploy the Next.js app to Render
+
+The repository-root `render.yaml` defines this app as a separate Node web service named `etaxoptimize-nextjs`; the existing Python/Streamlit service is unchanged. Connect the repository to Render as a Blueprint and sync the Blueprint. The Node service builds from this directory, applies the Prisma schema before deploy, and stores its SQLite database on a persistent disk.
+
+Set `PAYGATE_ID`, `PAYGATE_SECRET`, and `NEXT_PUBLIC_APP_URL` in the Render dashboard. Use the actual PayGate credentials and the deployed service URL. Render generates `AUTH_SECRET` and `OTP_PEPPER`; keep them private and stable between deploys.
+
+The deployment uses `prisma db push` because this repository does not yet contain Prisma migration files. Before making production schema changes, establish and test a migration workflow rather than relying on `db push`.
+
+Do not expose the service publicly until the production dependency findings are resolved. `npm audit --omit=dev` currently reports one critical Next.js vulnerability and high-severity PostCSS and Zod advisories, including after updating Next.js to 14.2.35.
